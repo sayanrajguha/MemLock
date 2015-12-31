@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="F:\Android\Projects\MemLock\MemLock\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.1.1\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="5c5699834e9722f1c288fea2de82725d078ba127">
+        <dex dex="F:\Android\Projects\MemLock\MemLock\app\build\intermediates\pre-dexed\debug\classes-9ba6c639b314c92ce6d53c9c68e23d20bc61c897.jar" />
+    </item>
+    <item
+        jar="F:\Android\Projects\MemLock\MemLock\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\23.1.1\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="09c5e804bc67fc0580360043dff067df574a60d4">
+        <dex dex="F:\Android\Projects\MemLock\MemLock\app\build\intermediates\pre-dexed\debug\classes-58fb58d3adfd22ab8ab83cbc86fb48af99803293.jar" />
+    </item>
+    <item
+        jar="F:\Android\Projects\MemLock\MemLock\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.1\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="6cbc7773921fcfedbe55657578f0cbfe614778dc">
+        <dex dex="F:\Android\Projects\MemLock\MemLock\app\build\intermediates\pre-dexed\debug\classes-0f3e09c7ef14f37d3c4e565b0e76c414840818f5.jar" />
+    </item>
+    <item
+        jar="F:\Android\android-sdk\extras\android\m2repository\com\android\support\support-annotations\23.1.1\support-annotations-23.1.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="8d680ba5a623724d1fb0e81c36a790f023a6cede">
+        <dex dex="F:\Android\Projects\MemLock\MemLock\app\build\intermediates\pre-dexed\debug\support-annotations-23.1.1-9b3e04caf0b24d0d1050c7437ce9c45a7e82270f.jar" />
+    </item>
+    <item
+        jar="F:\Android\Projects\MemLock\MemLock\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.1\jars\libs\internal_impl-23.1.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="a4de9c81ae239414e1ed0f86441b02abaf29bca9">
+        <dex dex="F:\Android\Projects\MemLock\MemLock\app\build\intermediates\pre-dexed\debug\internal_impl-23.1.1-bac67c795d92a88ba42b053f522d7cd3ea5a7bd9.jar" />
+    </item>
+
+</items>
