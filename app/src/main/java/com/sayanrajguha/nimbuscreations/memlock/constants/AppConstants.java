@@ -14,4 +14,21 @@ public class AppConstants {
 
     //Navigation Drawer
     public static final String KEY_USER_LEARNED_DRAWER = "user_learned_drawer";
+
+    //Database params
+    public static final String DATABASE_NAME="memlock_db";
+    public static final int DATABASE_VERSION = 1;
+    public static final String TABLE_USER = "user";
+    public static final String TABLE_MEMO = "memo";
+
+    public static final String USER_KEY_ID = "_id";
+    public static final String USER_KEY_USERNAME = "username";
+    public static final String USER_KEY_PASSWORD = "password";
+
+    public static final String MEMO_KEY_ID="_id";
+    public static final String MEMO_KEY_SUBJECT = "subject";
+    public static final String MEMO_KEY_DESC = "description";
+    public static final String MEMO_KEY_CONTENT = "content";
+
 }
+

@@ -5,4 +5,6 @@
     <color name="primaryColorDark">#FBC02D</color>
     <color name="accentColor">#B388FF</color>
     <color name="navDrawerBg">#FFF9C4</color>
+    <color name="memoContentBg">#F9A825</color>
+
 </resources>
