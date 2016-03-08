@@ -12,6 +12,12 @@ public class AppConstants {
     public static final String APP_VERSION = "1.0";
     public static final String APP_PREF_FILE_NAME = "com.sayanrajguha.nimbuscreations.memlock";
 
+    //Fragment tags
+    public static final String TAG_FRAGMENT_MEMOLIST = "MemoListFrag";
+    public static final String TAG_FRAGMENT_MEMOCONTENT = "MemoContentFrag";
+    public static final String TAG_FRAGMENT_CHANGEPASSWORD = "ChangePassFrag";
+    public static final String TAG_FRAGMENT_NAVDRAWER = "NavDrawerFrag";
+
     //Navigation Drawer
     public static final String KEY_USER_LEARNED_DRAWER = "user_learned_drawer";
 

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?><!-- Author Sayanraj Guha sayanrajguha@gmail.com -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/llList"
+        android:orientation="vertical"
+        />
+
+    <ImageButton
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        android:id="@+id/fabAddMemo"
+        android:background="@drawable/oval"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:elevation="10dp"
+        android:layout_marginBottom="65dp"
+        android:layout_marginRight="25dp"
+        android:src="@android:drawable/ic_input_add"
+        />
+    <!--<RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/rcvMemoList"
+        android:layout_below="@id/fragment_memo_list_toolbar"
+        >
+
+    </RecyclerView>-->
+</RelativeLayout>
