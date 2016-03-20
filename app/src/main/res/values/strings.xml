@@ -15,4 +15,6 @@
     <string name="lbl.OldPassword">Enter old password</string>
     <string name="lbl.NewPassword">Enter New Password</string>
     <string name="lbl.ConfNewPassword">Confirm New Password</string>
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="lbl.MemoAdded">Memo saved</string>
 </resources>

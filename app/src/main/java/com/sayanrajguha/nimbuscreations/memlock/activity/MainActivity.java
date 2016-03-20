@@ -71,10 +71,12 @@ public class MainActivity extends AppCompatActivity implements MemoListFragment.
     @Override
     public void fetchMemo(long ID) {
        // MessageService.message(this,String.valueOf(ID));
-        MessageService.log(KEY_LOG,"Changing fragment");
+        MessageService.log(KEY_LOG, "Changing fragment");
         MemoContentFragment fragmentObj = new MemoContentFragment();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         transaction.replace(R.id.mainContentArea, fragmentObj, AppConstants.TAG_FRAGMENT_MEMOCONTENT).addToBackStack(null).commit();
+        getSupportFragmentManager().executePendingTransactions();
+        fragmentObj.fetchData(ID);
     }
 }

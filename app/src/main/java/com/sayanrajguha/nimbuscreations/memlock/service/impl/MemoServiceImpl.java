@@ -13,6 +13,7 @@ import com.sayanrajguha.nimbuscreations.memlock.service.MemoService;
 import com.sayanrajguha.nimbuscreations.memlock.service.MessageService;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -105,8 +106,9 @@ public class MemoServiceImpl implements MemoService {
         Cursor memoCursor = db.query(AppConstants.TABLE_MEMO,null,null,null,null,null,null,null);
         if(null != memoCursor) {
             memoList = new ArrayList<>();
-            Memo memo = new Memo();
             while(memoCursor.moveToNext()) {
+                Memo memo = new Memo();
+                MessageService.log(KEY_LOG,"TITLE : "+memoCursor.getColumnIndex(AppConstants.MEMO_KEY_SUBJECT));
                 memo.setId(memoCursor.getLong(memoCursor.getColumnIndex(AppConstants.MEMO_KEY_ID)));
                 memo.setTitle(memoCursor.getString(memoCursor.getColumnIndex(AppConstants.MEMO_KEY_SUBJECT)));
                 memo.setDescription(memoCursor.getString(memoCursor.getColumnIndex(AppConstants.MEMO_KEY_DESC)));
@@ -114,7 +116,7 @@ public class MemoServiceImpl implements MemoService {
                 memoList.add(memo);
             }
         }
-
+        Collections.reverse(memoList);
         return memoList;
     }
 
@@ -131,8 +133,8 @@ public class MemoServiceImpl implements MemoService {
         public void onCreate(SQLiteDatabase db) {
             String methodName = "onCreate()";
             query = "CREATE TABLE " +AppConstants.TABLE_MEMO+ "(" +AppConstants.MEMO_KEY_ID+ " INTEGER PRIMARY KEY," +
-                    AppConstants.MEMO_KEY_SUBJECT+ " TEXT," +AppConstants.MEMO_KEY_DESC+ "TEXT," +
-                    AppConstants.MEMO_KEY_CONTENT +"TEXT)";
+                    AppConstants.MEMO_KEY_SUBJECT+ " TEXT," +AppConstants.MEMO_KEY_DESC+ " TEXT," +
+                    AppConstants.MEMO_KEY_CONTENT +" TEXT)";
             if(null != db) {
                 try {
                     db.execSQL(query);

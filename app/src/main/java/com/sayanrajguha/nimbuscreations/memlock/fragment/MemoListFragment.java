@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +16,12 @@ import android.widget.TextView;
 
 import com.sayanrajguha.nimbuscreations.memlock.R;
 import com.sayanrajguha.nimbuscreations.memlock.model.Memo;
+import com.sayanrajguha.nimbuscreations.memlock.model.ServiceResponse;
 import com.sayanrajguha.nimbuscreations.memlock.service.BackgroundMemoTask;
 import com.sayanrajguha.nimbuscreations.memlock.service.MessageService;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Author # Sayanraj Guha
@@ -29,7 +34,7 @@ public class MemoListFragment extends Fragment implements View.OnClickListener {
 
     ImageButton mFABAddBtn;
     LinearLayout mListLayout = null;
-
+    RecyclerView mMemoList = null;
     MemoDetailsFetcher detailsFetcher;
 
     @Nullable
@@ -39,6 +44,19 @@ public class MemoListFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_memo_list,container,false);
         mFABAddBtn = (ImageButton) view.findViewById(R.id.fabAddMemo);
         mListLayout = (LinearLayout) view.findViewById(R.id.llList);
+        mMemoList = (RecyclerView) view.findViewById(R.id.rvMemoList);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        mMemoList.setLayoutManager(layoutManager);
+
+
+        BackgroundMemoTask task = new BackgroundMemoTask(getActivity(),this);
+        Object[] requestParams = new Object[3];
+        requestParams[0] = BackgroundMemoTask.FLAG_GET_ALL;
+        requestParams[1] = new ArrayList();
+        requestParams[2] = null;
+        task.execute(requestParams);
+
         mFABAddBtn.setOnClickListener(this);
 
         return view;
@@ -53,7 +71,7 @@ public class MemoListFragment extends Fragment implements View.OnClickListener {
                     MessageService.log(KEY_LOG,"FAB clicked!");
 
                     if(null != detailsFetcher) {
-                        detailsFetcher.fetchMemo(v.getId());
+                        detailsFetcher.fetchMemo(-1);
                     } else {
                         MessageService.log(KEY_LOG,"detailsFetcher interface instance null");
                     }
@@ -78,32 +96,103 @@ public class MemoListFragment extends Fragment implements View.OnClickListener {
         void fetchMemo(long ID);
     }
 
-    private void populateValues() {
-        BackgroundMemoTask task = new BackgroundMemoTask(getActivity());
-        Object[] requestParams = new Object[3];
-        requestParams[0] = BackgroundMemoTask.FLAG_GET_ALL;
-        requestParams[1] = new ArrayList();
-        requestParams[2] = null;
-        Object response = task.execute(requestParams);
-        if(response!=null && response instanceof Object[]) {
-            Object[] responseData = (Object[]) response;
-            if(responseData[0]!=null && responseData[0] instanceof Boolean && responseData[2]!=null && responseData[2] instanceof ArrayList) {
-                Boolean status = (Boolean) responseData[0];
-                ArrayList<Memo> memoList = (ArrayList<Memo>) responseData[2];
-
-                if(status) {
-                    for (Memo memo: memoList) {
-                        TextView tView = new TextView(getActivity());
-                        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                        tView.setLayoutParams(params);
-                        tView.setText(memo.getTitle());
-                        mListLayout.addView(tView);
-                    }
-                } else {
-
-                }
+    public void processServiceCallback(ServiceResponse response) {
+        if(null != response) {
+            MessageService.log(KEY_LOG,"STATUS : "+response.isStatus());
+            MessageService.log(KEY_LOG,"FLAG : "+response.getFlag());
+            if(response.isStatus() && response.getFlag().equalsIgnoreCase(BackgroundMemoTask.FLAG_GET_ALL)) {
+                List<Memo> list = response.getMemoList();
+                showList(list);
+                populateList(list);
             }
         }
     }
 
+    private void showList(List<Memo> list) {
+       if(null != list) {
+           MessageService.log(KEY_LOG,"List size : "+list.size());
+       }
+        /*int i=1;
+        for (Memo memo : list) {
+            MessageService.log(KEY_LOG,"No : "+i);
+            MessageService.log(KEY_LOG,"ID : "+memo.getId());
+            MessageService.log(KEY_LOG,"Title : "+memo.getTitle());
+            MessageService.log(KEY_LOG,"Desc : "+memo.getDescription());
+            MessageService.log(KEY_LOG,"Content : "+memo.getContent());
+            i++;
+        }*/
+    }
+
+    private void populateList(List<Memo> memoList) {
+        MemoListAdapter adapter = new MemoListAdapter(memoList);
+        mMemoList.setAdapter(adapter);
+    }
+
+    public class MemoListAdapter extends RecyclerView.Adapter<MemoListAdapter.MemoViewHolder> {
+        public static final String KEY_LOG = "- MEMO LIST ADAPTER -";
+
+        private List<Memo> memoList;
+        public MemoListAdapter(List<Memo> memoList) {
+            this.memoList = memoList;
+        }
+
+        @Override
+        public MemoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.memo_card_layout,parent,false);
+            MemoViewHolder viewHolder = new MemoViewHolder(view);
+            return viewHolder;
+        }
+
+        @Override
+        public void onBindViewHolder(MemoViewHolder holder, int position) {
+            if(null != this.memoList && getItemCount() > 0) {
+                Memo memoData = this.memoList.get(position);
+                holder.mMemoID.setText(String.valueOf(memoData.getId()));
+                holder.mMemoTitle.setText(memoData.getTitle());
+                holder.mMemoDesc.setText(memoData.getDescription());
+                //holder.mMemoContent.setText(memoData.getContent());
+            }
+        }
+
+        @Override
+        public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+            super.onAttachedToRecyclerView(recyclerView);
+            MessageService.log(this.KEY_LOG,"ATTACHED TO RECYCLERVIEW");
+        }
+
+        @Override
+        public int getItemCount() {
+            if(null != memoList) {
+                return memoList.size();
+            }
+            return 0;
+        }
+
+        public class MemoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+            CardView mMemoCard;
+            TextView mMemoID;
+            TextView mMemoTitle;
+            TextView mMemoDesc;
+            //TextView mMemoContent;
+
+            public MemoViewHolder(View itemView) {
+                super(itemView);
+                mMemoCard = (CardView) itemView.findViewById(R.id.cvMemoCard);
+                mMemoID = (TextView) itemView.findViewById(R.id.tvMemoID);
+                mMemoTitle = (TextView) itemView.findViewById(R.id.tvMemoSub);
+                mMemoDesc = (TextView) itemView.findViewById(R.id.tvMemoDesc);
+                //mMemoContent = (TextView) itemView.findViewById(R.id.tvMemoContent);
+                itemView.setOnClickListener(this);
+            }
+
+            @Override
+            public void onClick(View v) {
+                if(detailsFetcher != null) {
+                    detailsFetcher.fetchMemo(Long.valueOf(mMemoID.getText().toString()));
+                }
+            }
+        }
+
+    }
 }

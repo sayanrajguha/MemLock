@@ -23,7 +23,7 @@ public class AppConstants {
 
     //Database params
     public static final String DATABASE_NAME="memlock_db";
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String TABLE_USER = "user";
     public static final String TABLE_MEMO = "memo";
 

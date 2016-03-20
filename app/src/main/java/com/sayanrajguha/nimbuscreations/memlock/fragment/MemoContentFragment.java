@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.sayanrajguha.nimbuscreations.memlock.R;
 import com.sayanrajguha.nimbuscreations.memlock.model.Memo;
+import com.sayanrajguha.nimbuscreations.memlock.model.ServiceResponse;
 import com.sayanrajguha.nimbuscreations.memlock.service.BackgroundMemoTask;
 import com.sayanrajguha.nimbuscreations.memlock.service.MessageService;
 
@@ -33,6 +34,7 @@ public class MemoContentFragment extends Fragment implements View.OnClickListene
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        MessageService.log(KEY_LOG,"onCreateView() caled");
         View view = inflater.inflate(R.layout.fragment_memo_content,container,false);
 
         mSubject = (EditText) view.findViewById(R.id.etMemoSubject);
@@ -48,35 +50,61 @@ public class MemoContentFragment extends Fragment implements View.OnClickListene
         return view;
     }
 
-    public void setData(long id, String subject, String description, String content) {
-        mSubject.setText(subject);
-        mDesc.setText(description);
-        mContent.setText(content);
-        mMemoID.setText(String.valueOf(id));
+    public void setData(Memo memo) {
+       //MessageService.log(KEY_LOG, mSubject + " (sub) "+mDesc+" (desc) "+mContent+" (content) "+mMemoID+" (id)");
+        mSubject.setText(memo.getTitle());
+        mDesc.setText(memo.getDescription());
+        mContent.setText(memo.getContent());
+        mMemoID.setText(String.valueOf(memo.getId()));
+    }
+
+    public boolean fetchData(long id) {
+        boolean fetchStatus = false;
+        Memo memoDataObject = new Memo();
+        if(id == -1) {
+            MessageService.log(KEY_LOG,"New Memo creation ");
+            memoDataObject.setId(-1);
+            memoDataObject.setTitle("");
+            memoDataObject.setContent("");
+            memoDataObject.setDescription("");
+        } else {
+            //logic for getting data from DB
+            BackgroundMemoTask task = new BackgroundMemoTask(getActivity(),this);
+            Object[] requestObject = new Object[3];
+            requestObject[0] = BackgroundMemoTask.FLAG_GET;
+            requestObject[1] = id;
+            task.execute(requestObject);
+        }
+        setData(memoDataObject);
+        return fetchStatus;
     }
 
     @Override
     public void onClick(View v) {
 
         MessageService.log(KEY_LOG, "Click listened! ID : " + v.getId());
-        Object[] requestObject = new Object[3];
-        Object response = null;
+        Object[] requestObject = null;
+        ServiceResponse response = null;
+        BackgroundMemoTask task = new BackgroundMemoTask(getActivity(),this);
         switch (v.getId()) {
             case R.id.fabSaveMemo :
+                requestObject = new Object[3];
                 MessageService.log(KEY_LOG,"Save Clicked! ");
                 Memo memo = getFormData();
+                MessageService.log(KEY_LOG," ID : "+memo.getId());
+                MessageService.log(KEY_LOG," Subject : "+memo.getTitle());
+                MessageService.log(KEY_LOG," Desc : "+memo.getDescription());
+                MessageService.log(KEY_LOG," Content : "+memo.getContent());
 
-                BackgroundMemoTask task = new BackgroundMemoTask(getActivity());
                 if(memo!=null && memo.getId()==-1) {
                     requestObject[0]=BackgroundMemoTask.FLAG_ADD;
                     requestObject[1]=memo;
                     requestObject[2]=null;
-                    response = task.execute(requestObject);
+
                 } else if(memo!=null && memo.getId()!=-1) {
                     requestObject[0] = BackgroundMemoTask.FLAG_UPDATE;
                     requestObject[1] = memo;
                     requestObject[2] = memo.getId();
-                    response = task.execute(requestObject);
                 }
                 break;
             case R.id.fabCancelMemo :
@@ -84,6 +112,22 @@ public class MemoContentFragment extends Fragment implements View.OnClickListene
                 break;
             default:
         }
+        if(null != requestObject) {
+            task.execute(requestObject);
+        }
+        /*if(null != response && response instanceof Object[]) {
+            Object[] responseArray = (Object[]) response;
+            if(responseArray[0] instanceof Boolean && responseArray[1] instanceof Memo && responseArray[2] instanceof ArrayList) {
+                boolean status = (boolean) responseArray[0];
+                Memo memoData = (Memo) responseArray[1];
+                ArrayList<Memo> memoList = (ArrayList<Memo>) responseArray[2];
+
+                if() {
+
+                }
+
+            }
+        }*/
     }
 
     private Memo getFormData() {
@@ -98,5 +142,23 @@ public class MemoContentFragment extends Fragment implements View.OnClickListene
         memo.setDescription(mDesc.getText().toString().trim());
         memo.setContent(mContent.getText().toString().trim());
         return memo;
+    }
+
+    public void processServiceCallback(ServiceResponse response) {
+        MessageService.log(KEY_LOG,"STATUS : "+response.isStatus());
+        MessageService.log(KEY_LOG, "FLAG : " + response.getFlag());
+        if(response.getFlag().equalsIgnoreCase(BackgroundMemoTask.FLAG_ADD)) {
+            getFragmentManager().popBackStackImmediate();
+            MessageService.message(getActivity(), getResources().getString(R.string.lbl_MemoAdded));
+        }
+        else if(response.getFlag().equalsIgnoreCase(BackgroundMemoTask.FLAG_GET)) {
+            MessageService.log(KEY_LOG,"Received memo id : "+response.getMemoData().getId());
+            MessageService.log(KEY_LOG,"Received memo sub : "+response.getMemoData().getTitle());
+            MessageService.log(KEY_LOG,"Received memo desc : "+response.getMemoData().getDescription());
+            MessageService.log(KEY_LOG,"Received memo content : "+response.getMemoData().getContent());
+            if(response.isStatus() && response.getMemoData() != null) {
+                setData(response.getMemoData());
+            }
+        }
     }
 }
